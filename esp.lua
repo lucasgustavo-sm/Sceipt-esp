@@ -1,100 +1,93 @@
--- =========================================================
--- PAINEL ESP OFC: ESTILO DARK NEON PREMIUM
--- Desenvolvido para: Lucas Gustavo
--- =========================================================
-
+-- PAINEL ESP OFC - COMPLETO E CORRIGIDO
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 
--- Configurações de funções
 local EspAtivado = false
 local AimbotAtivado = false
-local FovRaio = 100 -- Ajuste o tamanho do círculo aqui
+local FovRaio = 100
 
--- Remove painel anterior se existir
-if PlayerGui:FindFirstChild("PainelEspOfc") then
-    PlayerGui.PainelEspOfc:Destroy()
-end
+-- Limpeza
+if PlayerGui:FindFirstChild("PainelEspOfc") then PlayerGui.PainelEspOfc:Destroy() end
 
--- GUI Principal
-local ScreenGui = Instance.new("ScreenGui")
+local ScreenGui = Instance.new("ScreenGui", PlayerGui)
 ScreenGui.Name = "PainelEspOfc"
-ScreenGui.Parent = PlayerGui
-ScreenGui.ResetOnSpawn = false
 
--- Quadro Principal
-local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 230, 0, 250)
-MainFrame.Position = UDim2.new(0.5, -115, 0.3, -125)
-MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-MainFrame.BorderSizePixel = 0
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 200, 0, 200)
+MainFrame.Position = UDim2.new(0.5, -100, 0.5, -100)
+MainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 MainFrame.Active = true
 MainFrame.Draggable = true
-MainFrame.Parent = ScreenGui
-MainFrame.Name = "MainFrame"
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
 
--- Título
-local Title = Instance.new("TextLabel")
-Title.Size = UDim2.new(1, 0, 0, 40)
+local Title = Instance.new("TextLabel", MainFrame)
+Title.Size = UDim2.new(1, 0, 0, 30)
 Title.Text = "ESP OFC"
-Title.TextColor3 = Color3.fromRGB(0, 255, 255) -- Cor Neon
-Title.Font = Enum.Font.CodeBold
-Title.TextSize = 20
+Title.TextColor3 = Color3.new(1, 1, 1)
 Title.BackgroundTransparency = 1
-Title.Parent = MainFrame
 
--- Círculo FOV Visual
-local FovFrame = Instance.new("Frame")
-FovFrame.Size = UDim2.new(0, FovRaio * 2, 0, FovRaio * 2)
-FovFrame.BackgroundColor3 = Color3.fromRGB(255, 150, 0)
-FovFrame.BackgroundTransparency = 0.8
-FovFrame.BorderSizePixel = 1
-FovFrame.Visible = true
-FovFrame.Parent = ScreenGui
-local UICorner = Instance.new("UICorner", FovFrame)
-UICorner.CornerRadius = UDim.new(1, 0)
+-- Botões
+local function criarBtn(nome, pos, cor)
+    local btn = Instance.new("TextButton", MainFrame)
+    btn.Size = UDim2.new(0, 180, 0, 40)
+    btn.Position = pos
+    btn.Text = nome
+    btn.BackgroundColor3 = cor
+    Instance.new("UICorner", btn)
+    return btn
+end
 
--- Ajuste centralizado do FOV
-RunService.RenderStepped:Connect(function()
-    local centroDaTela = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-    FovFrame.Position = UDim2.new(0, centroDaTela.X - FovRaio, 0, centroDaTela.Y - FovRaio)
+local BtnEsp = criarBtn("ESP: DESATIVADO", UDim2.new(0, 10, 0, 40), Color3.fromRGB(150, 0, 0))
+local BtnAim = criarBtn("AIMBOT: DESATIVADO", UDim2.new(0, 10, 0, 90), Color3.fromRGB(150, 0, 0))
+local BtnOpt = criarBtn("OTIMIZAR FPS", UDim2.new(0, 10, 0, 140), Color3.fromRGB(0, 100, 200))
+
+-- Círculo FOV
+local FovCircle = Instance.new("Frame", ScreenGui)
+FovCircle.Size = UDim2.new(0, FovRaio*2, 0, FovRaio*2)
+FovCircle.BackgroundTransparency = 1
+FovCircle.Visible = false
+Instance.new("UIStroke", FovCircle).Color = Color3.new(1, 1, 1)
+Instance.new("UICorner", FovCircle).CornerRadius = UDim.new(1, 0)
+
+-- Lógica
+BtnEsp.MouseButton1Click:Connect(function()
+    EspAtivado = not EspAtivado
+    BtnEsp.Text = EspAtivado and "ESP: ATIVADO" or "ESP: DESATIVADO"
+    BtnEsp.BackgroundColor3 = EspAtivado and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 end)
 
--- Função do Aimbot corrigida
-local function ObterJogadorMaisProximo()
-    local alvoMaisProximo = nil
-    local menorDistanciaTela = FovRaio
-    local centroDaTela = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+BtnAim.MouseButton1Click:Connect(function()
+    AimbotAtivado = not AimbotAtivado
+    BtnAim.Text = AimbotAtivado and "AIMBOT: ATIVADO" or "AIMBOT: DESATIVADO"
+    BtnAim.BackgroundColor3 = AimbotAtivado and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
+    FovCircle.Visible = AimbotAtivado
+end)
 
-    for _, player in pairs(Players:GetPlayers()) do
-        if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head") then
-            local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
-            if humanoid and humanoid.Health > 0 then
-                local posicaoTela, visivel = Camera:WorldToViewportPoint(player.Character.Head.Position)
-                
-                if visivel then
-                    local distanciaDoCentro = (Vector2.new(posicaoTela.X, posicaoTela.Y) - centroDaTela).Magnitude
-                    if distanciaDoCentro < menorDistanciaTela then
-                        menorDistanciaTela = distanciaDoCentro
-                        alvoMaisProximo = player.Character.Head
-                    end
+BtnOpt.MouseButton1Click:Connect(function()
+    settings().Rendering.QualityLevel = 1
+    BtnOpt.Text = "OTIMIZADO!"
+end)
+
+-- Loop Centralização
+RunService.RenderStepped:Connect(function()
+    local c = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+    FovCircle.Position = UDim2.new(0, c.X - FovRaio, 0, c.Y - FovRaio)
+    
+    if AimbotAtivado then
+        local alvo = nil
+        local menorDist = FovRaio
+        for _, p in pairs(Players:GetPlayers()) do
+            if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
+                local pos, vis = Camera:WorldToViewportPoint(p.Character.Head.Position)
+                if vis then
+                    local dist = (Vector2.new(pos.X, pos.Y) - c).Magnitude
+                    if dist < menorDist then alvo = p.Character.Head; menorDist = dist end
                 end
             end
         end
-    end
-    return alvoMaisProximo
-end
-
--- Loop de mira
-RunService.RenderStepped:Connect(function()
-    if AimbotAtivado then
-        local alvo = ObterJogadorMaisProximo()
-        if alvo then
-            Camera.CFrame = CFrame.new(Camera.CFrame.Position, alvo.Position)
-        end
+        if alvo then Camera.CFrame = CFrame.new(Camera.CFrame.Position, alvo.Position) end
     end
 end)
-
