@@ -1,4 +1,4 @@
--- PAINEL ULTIMATE V2: ESP (PADRÃO DESLIGADO) + AIMBOT (FOV 50) + BOTÃO "L" MÓVEL E CENTRALIZADO
+-- PAINEL ULTIMATE REDESIGN: ESTILO DARK NEON PREMIUM
 -- Desenvolvido para: Lucas Gustavo
 
 local Players = game:GetService("Players")
@@ -7,116 +7,158 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 
--- =========================================================
--- AJUSTES DE CONFIGURAÇÃO (PEDIDOS POR VOCÊ)
--- =========================================================
-local EspAtivado = false       -- [AJUSTADO] Inicia o jogo DESLIGADO
+-- Configurações de funções
+local EspAtivado = false       
 local AimbotAtivado = false
-local FovRaio = 50             -- [AJUSTADO] Tamanho do FOV reduzido para 50
+local FovRaio = 50             
 
--- Limpeza de segurança para não duplicar telas
 if PlayerGui:FindFirstChild("PainelLucasCompleto") then 
     PlayerGui.PainelLucasCompleto:Destroy() 
 end
 
--- Interface Principal
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "PainelLucasCompleto"
 ScreenGui.Parent = PlayerGui
 ScreenGui.ResetOnSpawn = false
 
+-- =========================================================
+-- QUADRO PRINCIPAL (DESIGN MODERNO)
+-- =========================================================
 local MainFrame = Instance.new("Frame")
-MainFrame.Size = UDim2.new(0, 220, 0, 240)
-MainFrame.Position = UDim2.new(0.5, -110, 0.3, -120)
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+MainFrame.Size = UDim2.new(0, 230, 0, 250)
+MainFrame.Position = UDim2.new(0.5, -115, 0.3, -125)
+MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15) -- Grafite bem escuro
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
 MainFrame.Draggable = true
 MainFrame.Parent = ScreenGui
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 8)
 
+-- Canto arredondado suave
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 10)
+
+-- Borda Neon Laranja sutil ao redor do painel
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Color = Color3.fromRGB(255, 100, 0)
+MainStroke.Thickness = 1.5
+MainStroke.ApplyStrokeMode = Enum.ApplyStrokeMode.Border
+
+-- Topo do Painel (Barra de arrastar)
 local TopBar = Instance.new("Frame", MainFrame)
-TopBar.Size = UDim2.new(1, 0, 0, 35)
+TopBar.Size = UDim2.new(1, 0, 0, 38)
 TopBar.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 8)
+Instance.new("UICorner", TopBar).CornerRadius = UDim.new(0, 10)
 
 local Title = Instance.new("TextLabel", TopBar)
 Title.Size = UDim2.new(1, -60, 1, 0)
-Title.Position = UDim2.new(0, 10, 0, 0)
-Title.Text = "Lucas Gustavo"
-Title.TextColor3 = Color3.fromRGB(255, 140, 0)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 15
+Title.Position = UDim2.new(0, 12, 0, 0)
+Title.Text = "LUCAS GUSTAVO"
+Title.TextColor3 = Color3.fromRGB(255, 120, 0) -- Laranja Neon
+Title.Font = Enum.Font.GothamBold
+Title.TextSize = 14
 Title.TextXAlignment = Enum.TextXAlignment.Left
 Title.BackgroundTransparency = 1
 
+-- Botão Minimizar Estilizado
 local MinBtn = Instance.new("TextButton", TopBar)
-MinBtn.Size = UDim2.new(0, 25, 0, 25)
-MinBtn.Position = UDim2.new(1, -60, 0, 5)
-MinBtn.Text = "-"
-MinBtn.TextColor3 = Color3.new(1, 1, 1)
-MinBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 5)
+MinBtn.Size = UDim2.new(0, 24, 0, 24)
+MinBtn.Position = UDim2.new(1, -62, 0, 7)
+MinBtn.Text = "−"
+MinBtn.TextColor3 = Color3.fromRGB(200, 200, 200)
+MinBtn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+MinBtn.Font = Enum.Font.GothamBold
+MinBtn.TextSize = 14
+Instance.new("UICorner", MinBtn).CornerRadius = UDim.new(0, 6)
 
+local MinStroke = Instance.new("UIStroke", MinBtn)
+MinStroke.Color = Color3.fromRGB(60, 60, 60)
+MinStroke.Thickness = 1
+
+-- Botão Fechar Estilizado
 local CloseBtn = Instance.new("TextButton", TopBar)
-CloseBtn.Size = UDim2.new(0, 25, 0, 25)
-CloseBtn.Position = UDim2.new(1, -30, 0, 5)
-CloseBtn.Text = "X"
-CloseBtn.TextColor3 = Color3.fromRGB(255, 75, 75)
-CloseBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 5)
+CloseBtn.Size = UDim2.new(0, 24, 0, 24)
+CloseBtn.Position = UDim2.new(1, -32, 0, 7)
+CloseBtn.Text = "×"
+CloseBtn.TextColor3 = Color3.fromRGB(255, 80, 80)
+CloseBtn.BackgroundColor3 = Color3.fromRGB(30, 15, 15)
+CloseBtn.Font = Enum.Font.GothamBold
+CloseBtn.TextSize = 16
+Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 6)
+
+local CloseStroke = Instance.new("UIStroke", CloseBtn)
+CloseStroke.Color = Color3.fromRGB(120, 40, 40)
+CloseStroke.Thickness = 1
 
 -- =========================================================
--- [AJUSTADO] BOTÃO "L" MÓVEL E CENTRALIZADO NO MEIO DA TELA
+-- BOTÃO "L" MÓVEL E ESTILIZADO (MINIMIZADO)
 -- =========================================================
 local OpenBtn = Instance.new("TextButton", ScreenGui)
 OpenBtn.Size = UDim2.new(0, 45, 0, 45)
-OpenBtn.Position = UDim2.new(0.5, -22, 0.5, -22) -- Perfeitamente centralizado
+OpenBtn.Position = UDim2.new(0.5, -22, 0.5, -22)
 OpenBtn.Text = "L"
-OpenBtn.TextColor3 = Color3.fromRGB(255, 140, 0)
-OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-OpenBtn.Font = Enum.Font.SourceSansBold
-OpenBtn.TextSize = 20
+OpenBtn.TextColor3 = Color3.fromRGB(255, 120, 0)
+OpenBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+OpenBtn.Font = Enum.Font.GothamBold
+OpenBtn.TextSize = 18
 OpenBtn.Visible = false
 OpenBtn.Active = true
-OpenBtn.Draggable = true -- Habilita arrastar o botão para qualquer lugar da tela do celular
+OpenBtn.Draggable = true
 Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 22)
 
 local OpenStroke = Instance.new("UIStroke", OpenBtn)
-OpenStroke.Color = Color3.fromRGB(255, 140, 0)
-OpenStroke.Thickness = 1.5
+OpenStroke.Color = Color3.fromRGB(255, 120, 0)
+OpenStroke.Thickness = 2
 
--- Criador de Botões Dinâmicos
-local function CriarBotao(texto, pos, cor)
+-- =========================================================
+-- CRIADOR DE BOTÕES PREMIUM
+-- =========================================================
+local function CriarBotaoPremium(texto, pos, corFundo, corBorda)
     local btn = Instance.new("TextButton", MainFrame)
-    btn.Size = UDim2.new(1, -20, 0, 40)
+    btn.Size = UDim2.new(1, -24, 0, 38)
     btn.Position = pos
     btn.Text = texto
-    btn.TextColor3 = Color3.new(1, 1, 1)
-    btn.BackgroundColor3 = cor
-    btn.Font = Enum.Font.SourceSansBold
-    btn.TextSize = 14
+    btn.TextColor3 = Color3.fromRGB(240, 240, 240)
+    btn.BackgroundColor3 = corFundo
+    btn.Font = Enum.Font.GothamMedium
+    btn.TextSize = 13
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
+    
+    local btnStroke = Instance.new("UIStroke", btn)
+    btnStroke.Color = corBorda
+    btnStroke.Thickness = 1
+    
     return btn
 end
 
--- [AJUSTADO] ESP inicia com o texto de DESATIVADO e cor vermelha
-local ToggleEspBtn = CriarBotao("ESP: DESATIVADO", UDim2.new(0, 10, 0, 50), Color3.fromRGB(150, 0, 0))
-local ToggleAimBtn = CriarBotao("AIMBOT: DESATIVADO", UDim2.new(0, 10, 0, 100), Color3.fromRGB(150, 0, 0))
-local OptBtn = CriarBotao("OTIMIZAR FPS", UDim2.new(0, 10, 0, 150), Color3.fromRGB(0, 100, 200))
+local ToggleEspBtn = CriarBotaoPremium("ESP: DESATIVADO", UDim2.new(0, 12, 0, 55), Color3.fromRGB(25, 15, 15), Color3.fromRGB(150, 40, 40))
+local ToggleAimBtn = CriarBotaoPremium("AIMBOT: DESATIVADO", UDim2.new(0, 12, 0, 105), Color3.fromRGB(25, 15, 15), Color3.fromRGB(150, 40, 40))
+local OptBtn = CriarBotaoPremium("OTIMIZAR FPS", UDim2.new(0, 12, 0, 155), Color3.fromRGB(15, 25, 35), Color3.fromRGB(0, 120, 220))
 
--- Círculo Visual do FOV para o Aimbot (Configurado em 50)
+-- Linha decorativa de rodapé
+local FooterLine = Instance.new("Frame", MainFrame)
+FooterLine.Size = UDim2.new(1, -24, 0, 1)
+FooterLine.Position = UDim2.new(0, 12, 0, 210)
+FooterLine.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+FooterLine.BorderSizePixel = 0
+
+local FooterText = Instance.new("TextLabel", MainFrame)
+FooterText.Size = UDim2.new(1, 0, 0, 20)
+FooterText.Position = UDim2.new(0, 0, 0, 218)
+FooterText.Text = "Status: Pronto para Injetar"
+FooterText.TextColor3 = Color3.fromRGB(120, 120, 120)
+FooterText.Font = Enum.Font.Gotham
+FooterText.TextSize = 11
+FooterText.BackgroundTransparency = 1
+
+-- Círculo do FOV
 local FovFrame = Instance.new("Frame")
 FovFrame.Size = UDim2.new(0, FovRaio * 2, 0, FovRaio * 2)
 FovFrame.Position = UDim2.new(0.5, -FovRaio, 0.5, -FovRaio)
 FovFrame.BackgroundTransparency = 1
 FovFrame.Visible = false
 FovFrame.Parent = ScreenGui
-
 local FovStroke = Instance.new("UIStroke", FovFrame)
-FovStroke.Color = Color3.new(1, 1, 1)
+FovStroke.Color = Color3.fromRGB(255, 120, 0) -- Círculo combina com o Neon Laranja
 FovStroke.Thickness = 1
-FovStroke.Transparency = 0.5
 Instance.new("UICorner", FovFrame).CornerRadius = UDim.new(1, 0)
 
 -- Controles de Janela
@@ -132,8 +174,9 @@ OptBtn.MouseButton1Click:Connect(function()
     for _, obj in pairs(workspace:GetDescendants()) do
         if obj:IsA("Decal") or obj:IsA("Texture") then obj.Transparency = 1 end
     end
-    OptBtn.Text = "JOGO OTIMIZADO!"
-    OptBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+    OptBtn.Text = "SISTEMA OTIMIZADO"
+    OptBtn.BackgroundColor3 = Color3.fromRGB(20, 25, 20)
+    OptBtn.UIStroke.Color = Color3.fromRGB(40, 180, 40)
 end)
 
 -- =========================================================
@@ -141,18 +184,14 @@ end)
 -- =========================================================
 local function LimparVisual(character)
     if character:FindFirstChild("ESPHighlight") then character.ESPHighlight:Destroy() end
-    if character:FindFirstChild("Head") and character.Head:FindFirstChild("ESPTags") then
-        character.Head.ESPTags:Destroy()
-    end
+    if character:FindFirstChild("Head") and character.Head:FindFirstChild("ESPTags") then character.Head.ESPTags:Destroy() end
 end
 
 local function CriarVisual(player)
     if player == LocalPlayer then return end
-    
     task.spawn(function()
         while player and player.Parent and player.Character do
             local character = player.Character
-            
             if not EspAtivado then
                 LimparVisual(character)
                 task.wait(0.5)
@@ -162,13 +201,12 @@ local function CriarVisual(player)
                     if not highlight then
                         highlight = Instance.new("Highlight")
                         highlight.Name = "ESPHighlight"
-                        highlight.FillColor = Color3.fromRGB(255, 140, 0)
+                        highlight.FillColor = Color3.fromRGB(255, 120, 0)
                         highlight.FillTransparency = 0.5
                         highlight.OutlineColor = Color3.new(1, 1, 1)
                         highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
                         highlight.Parent = character
                     end
-
                     local head = character.Head
                     local billboard = head:FindFirstChild("ESPTags")
                     if not billboard then
@@ -178,17 +216,14 @@ local function CriarVisual(player)
                         billboard.StudsOffset = Vector3.new(0, 2.5, 0)
                         billboard.AlwaysOnTop = true
                         billboard.Parent = head
-
-                        local textLabel = Instance.new("TextLabel", billboard)
-                        textLabel.Name = "InfoText"
-                        textLabel.Size = UDim2.new(1, 0, 1, 0)
-                        textLabel.BackgroundTransparency = 1
-                        textLabel.TextColor3 = Color3.new(1, 1, 1)
-                        textLabel.TextSize = 13
-                        textLabel.Font = Enum.Font.SourceSansBold
-                        textLabel.TextStrokeTransparency = 0
+                        local t = Instance.new("TextLabel", billboard)
+                        t.Name = "InfoText"
+                        t.Size = UDim2.new(1, 0, 1, 0)
+                        t.BackgroundTransparency = 1
+                        t.TextColor3 = Color3.new(1, 1, 1)
+                        t.TextSize = 13
+                        t.Font = Enum.Font.GothamBold
                     end
-
                     local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                     local targetRoot = character.HumanoidRootPart
                     if localRoot and targetRoot and billboard:FindFirstChild("InfoText") then
@@ -202,20 +237,18 @@ local function CriarVisual(player)
     end)
 end
 
--- Botão Liga/Desliga do ESP
 ToggleEspBtn.MouseButton1Click:Connect(function()
-    if not ScreenGui.Parent then return end
     EspAtivado = not EspAtivado
     if EspAtivado then
         ToggleEspBtn.Text = "ESP: ATIVADO"
-        ToggleEspBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+        ToggleEspBtn.BackgroundColor3 = Color3.fromRGB(15, 25, 15)
+        ToggleEspBtn.UIStroke.Color = Color3.fromRGB(40, 180, 40)
         for _, p in pairs(Players:GetPlayers()) do CriarVisual(p) end
     else
         ToggleEspBtn.Text = "ESP: DESATIVADO"
-        ToggleEspBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-        for _, p in pairs(Players:GetPlayers()) do
-            if p.Character then LimparVisual(p.Character) end
-        end
+        ToggleEspBtn.BackgroundColor3 = Color3.fromRGB(25, 15, 15)
+        ToggleEspBtn.UIStroke.Color = Color3.fromRGB(150, 40, 40)
+        for _, p in pairs(Players:GetPlayers()) do if p.Character then LimparVisual(p.Character) end end
     end
 end)
 
@@ -225,17 +258,14 @@ end)
 local function ObterJogadorMaisProximo()
     local alvoMaisProximo = nil
     local menorDistanciaTela = FovRaio
-
     for _, player in pairs(Players:GetPlayers()) do
         if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character:FindFirstChild("Head") then
             local humanoid = player.Character:FindFirstChildOfClass("Humanoid")
             if humanoid and humanoid.Health > 0 then
                 local posicaoTela, visivel = Camera:WorldToViewportPoint(player.Character.Head.Position)
-                
                 if visivel then
                     local centroTela = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
                     local distanciaDoCentro = (Vector2.new(posicaoTela.X, posicaoTela.Y) - centroTela).Magnitude
-                    
                     if distanciaDoCentro < menorDistanciaTela then
                         menorDistanciaTela = distanciaDoCentro
                         alvoMaisProximo = player.Character.Head
@@ -250,9 +280,7 @@ end
 RunService.RenderStepped:Connect(function()
     if AimbotAtivado then
         local alvo = ObterJogadorMaisProximo()
-        if alvo then
-            Camera.CFrame = CFrame.new(Camera.CFrame.Position, alvo.Position)
-        end
+        if alvo then Camera.CFrame = CFrame.new(Camera.CFrame.Position, alvo.Position) end
     end
 end)
 
@@ -260,21 +288,22 @@ ToggleAimBtn.MouseButton1Click:Connect(function()
     AimbotAtivado = not AimbotAtivado
     if AimbotAtivado then
         ToggleAimBtn.Text = "AIMBOT: ATIVADO"
-        ToggleAimBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+        ToggleAimBtn.BackgroundColor3 = Color3.fromRGB(15, 25, 15)
+        ToggleAimBtn.UIStroke.Color = Color3.fromRGB(40, 180, 40)
         FovFrame.Visible = true
     else
         ToggleAimBtn.Text = "AIMBOT: DESATIVADO"
-        ToggleAimBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        ToggleAimBtn.BackgroundColor3 = Color3.fromRGB(25, 15, 15)
+        ToggleAimBtn.UIStroke.Color = Color3.fromRGB(150, 40, 40)
         FovFrame.Visible = false
     end
 end)
 
--- Inicialização segura
+-- Inicialização
 for _, p in pairs(Players:GetPlayers()) do
     if p.Character then CriarVisual(p) end
     p.CharacterAdded:Connect(function() task.wait(0.5); CriarVisual(p) end)
 end
-
 Players.PlayerAdded:Connect(function(p)
     p.CharacterAdded:Connect(function() task.wait(0.5); CriarVisual(p) end)
 end)
