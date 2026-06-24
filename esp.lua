@@ -8,9 +8,9 @@ local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 
 -- Controles Globais
-local EspAtivado = true
+local EspAtivado = false
 local AimbotAtivado = false
-local FovRaio = 100
+local FovRaio = 50 
 
 -- Limpeza de segurança para não duplicar telas
 if PlayerGui:FindFirstChild("PainelLucasCompleto") then 
