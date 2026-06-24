@@ -1,4 +1,4 @@
--- PAINEL ULTIMATE: ESP CORRIGIDO + AIMBOT + MINIMIZAR + FPS BOOST
+-- PAINEL ULTIMATE V2: ESP (PADRÃO DESLIGADO) + AIMBOT (FOV 50) + BOTÃO "L" MÓVEL E CENTRALIZADO
 -- Desenvolvido para: Lucas Gustavo
 
 local Players = game:GetService("Players")
@@ -7,19 +7,19 @@ local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 local RunService = game:GetService("RunService")
 local Camera = workspace.CurrentCamera
 
--- Controles Globais
-local EspAtivado = false
+-- =========================================================
+-- AJUSTES DE CONFIGURAÇÃO (PEDIDOS POR VOCÊ)
+-- =========================================================
+local EspAtivado = false       -- [AJUSTADO] Inicia o jogo DESLIGADO
 local AimbotAtivado = false
-local FovRaio = 50 
+local FovRaio = 50             -- [AJUSTADO] Tamanho do FOV reduzido para 50
 
 -- Limpeza de segurança para não duplicar telas
 if PlayerGui:FindFirstChild("PainelLucasCompleto") then 
     PlayerGui.PainelLucasCompleto:Destroy() 
 end
 
--- =========================================================
--- INTERFACE GRÁFICA (UI NATIVA)
--- =========================================================
+-- Interface Principal
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "PainelLucasCompleto"
 ScreenGui.Parent = PlayerGui
@@ -66,16 +66,25 @@ CloseBtn.TextColor3 = Color3.fromRGB(255, 75, 75)
 CloseBtn.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(0, 5)
 
+-- =========================================================
+-- [AJUSTADO] BOTÃO "L" MÓVEL E CENTRALIZADO NO MEIO DA TELA
+-- =========================================================
 local OpenBtn = Instance.new("TextButton", ScreenGui)
-OpenBtn.Size = UDim2.new(0, 40, 0, 40)
-OpenBtn.Position = UDim2.new(0, 10, 0.5, -20)
+OpenBtn.Size = UDim2.new(0, 45, 0, 45)
+OpenBtn.Position = UDim2.new(0.5, -22, 0.5, -22) -- Perfeitamente centralizado
 OpenBtn.Text = "L"
 OpenBtn.TextColor3 = Color3.fromRGB(255, 140, 0)
 OpenBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 OpenBtn.Font = Enum.Font.SourceSansBold
-OpenBtn.TextSize = 18
+OpenBtn.TextSize = 20
 OpenBtn.Visible = false
-Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 20)
+OpenBtn.Active = true
+OpenBtn.Draggable = true -- Habilita arrastar o botão para qualquer lugar da tela do celular
+Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(0, 22)
+
+local OpenStroke = Instance.new("UIStroke", OpenBtn)
+OpenStroke.Color = Color3.fromRGB(255, 140, 0)
+OpenStroke.Thickness = 1.5
 
 -- Criador de Botões Dinâmicos
 local function CriarBotao(texto, pos, cor)
@@ -91,11 +100,12 @@ local function CriarBotao(texto, pos, cor)
     return btn
 end
 
-local ToggleEspBtn = CriarBotao("ESP: ATIVADO", UDim2.new(0, 10, 0, 50), Color3.fromRGB(0, 150, 0))
+-- [AJUSTADO] ESP inicia com o texto de DESATIVADO e cor vermelha
+local ToggleEspBtn = CriarBotao("ESP: DESATIVADO", UDim2.new(0, 10, 0, 50), Color3.fromRGB(150, 0, 0))
 local ToggleAimBtn = CriarBotao("AIMBOT: DESATIVADO", UDim2.new(0, 10, 0, 100), Color3.fromRGB(150, 0, 0))
 local OptBtn = CriarBotao("OTIMIZAR FPS", UDim2.new(0, 10, 0, 150), Color3.fromRGB(0, 100, 200))
 
--- Círculo Visual do FOV para o Aimbot
+-- Círculo Visual do FOV para o Aimbot (Configurado em 50)
 local FovFrame = Instance.new("Frame")
 FovFrame.Size = UDim2.new(0, FovRaio * 2, 0, FovRaio * 2)
 FovFrame.Position = UDim2.new(0.5, -FovRaio, 0.5, -FovRaio)
@@ -109,14 +119,12 @@ FovStroke.Thickness = 1
 FovStroke.Transparency = 0.5
 Instance.new("UICorner", FovFrame).CornerRadius = UDim.new(1, 0)
 
--- Controles de Janela (Minimizar / Abrir / Fechar)
+-- Controles de Janela
 MinBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false; OpenBtn.Visible = true end)
 OpenBtn.MouseButton1Click:Connect(function() MainFrame.Visible = true; OpenBtn.Visible = false end)
 CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
 
--- =========================================================
--- FUNÇÃO DO BOOSTER DE FPS
--- =========================================================
+-- Otimizador
 OptBtn.MouseButton1Click:Connect(function()
     local L = game:GetService("Lighting")
     L.GlobalShadows = false
@@ -129,7 +137,7 @@ OptBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =========================================================
--- LÓGICA COMPLETA E CORRIGIDA DO ESP
+-- LÓGICA DO ESP
 -- =========================================================
 local function LimparVisual(character)
     if character:FindFirstChild("ESPHighlight") then character.ESPHighlight:Destroy() end
@@ -145,13 +153,11 @@ local function CriarVisual(player)
         while player and player.Parent and player.Character do
             local character = player.Character
             
-            -- Se o ESP global estiver desligado, limpa os efeitos e espera
             if not EspAtivado then
                 LimparVisual(character)
                 task.wait(0.5)
             else
                 if character:FindFirstChild("HumanoidRootPart") and character:FindFirstChild("Head") then
-                    -- 1. Cria/Mantém a Silhueta Laranja
                     local highlight = character:FindFirstChild("ESPHighlight")
                     if not highlight then
                         highlight = Instance.new("Highlight")
@@ -163,7 +169,6 @@ local function CriarVisual(player)
                         highlight.Parent = character
                     end
 
-                    -- 2. Cria/Mantém as Tags de Distância e Nome
                     local head = character.Head
                     local billboard = head:FindFirstChild("ESPTags")
                     if not billboard then
@@ -184,7 +189,6 @@ local function CriarVisual(player)
                         textLabel.TextStrokeTransparency = 0
                     end
 
-                    -- Atualização das métricas de distância
                     local localRoot = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart")
                     local targetRoot = character.HumanoidRootPart
                     if localRoot and targetRoot and billboard:FindFirstChild("InfoText") then
@@ -192,24 +196,23 @@ local function CriarVisual(player)
                         billboard.InfoText.Text = player.DisplayName .. " [" .. dist .. "m]"
                     end
                 end
-                task.wait(0.1) -- Taxa estável de atualização
+                task.wait(0.1)
             end
         end
     end)
 end
 
--- Gerenciamento de ativação do botão ESP
+-- Botão Liga/Desliga do ESP
 ToggleEspBtn.MouseButton1Click:Connect(function()
+    if not ScreenGui.Parent then return end
     EspAtivado = not EspAtivado
     if EspAtivado then
         ToggleEspBtn.Text = "ESP: ATIVADO"
         ToggleEspBtn.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-        -- Recria os efeitos para os jogadores atuais
         for _, p in pairs(Players:GetPlayers()) do CriarVisual(p) end
     else
         ToggleEspBtn.Text = "ESP: DESATIVADO"
         ToggleEspBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-        -- Remove imediatamente os efeitos de todo mundo
         for _, p in pairs(Players:GetPlayers()) do
             if p.Character then LimparVisual(p.Character) end
         end
@@ -217,7 +220,7 @@ ToggleEspBtn.MouseButton1Click:Connect(function()
 end)
 
 -- =========================================================
--- LÓGICA DO AIMBOT COM CÁLCULO DE FOV
+-- LÓGICA DO AIMBOT
 -- =========================================================
 local function ObterJogadorMaisProximo()
     local alvoMaisProximo = nil
@@ -266,7 +269,7 @@ ToggleAimBtn.MouseButton1Click:Connect(function()
     end
 end)
 
--- Inicialização e conexões de entrada de jogadores
+-- Inicialização segura
 for _, p in pairs(Players:GetPlayers()) do
     if p.Character then CriarVisual(p) end
     p.CharacterAdded:Connect(function() task.wait(0.5); CriarVisual(p) end)
